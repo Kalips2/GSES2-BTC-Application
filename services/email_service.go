@@ -4,7 +4,6 @@ import (
 	"btcApplication/repositories"
 	"btcApplication/utils"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"github.com/go-gomail/gomail"
 )
@@ -19,7 +18,6 @@ func SendToEmailsService() {
 	for _, email := range emails {
 		message.SetHeader("To", email)
 		if err := dialer.DialAndSend(message); err != nil {
-			print(err.Error())
 			continue
 		}
 	}
@@ -27,14 +25,7 @@ func SendToEmailsService() {
 }
 
 func SubscribeEmailService(email string) error {
-
-	if !utils.ValidateEmail(email) {
-		return errors.New("Invalid email format.")
-	}
-
-	repositories.SaveEmailToStorage(email)
-
-	return nil
+	return repositories.SaveEmailToStorage(email)
 }
 
 func setUpMessageToSend(rate float64) (*gomail.Dialer, *gomail.Message) {

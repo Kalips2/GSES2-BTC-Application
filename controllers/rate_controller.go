@@ -8,11 +8,9 @@ import (
 )
 
 func GetCurrentRateHandlerController(c *gin.Context) {
-	rate, err := services.GetCurrentRate()
-	if err != nil {
-		c.String(http.StatusBadRequest, "Failed to get current rate. Try again!")
-		return
+	if rate, err := services.GetCurrentRate(); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+	} else {
+		c.String(http.StatusOK, fmt.Sprintf("%.5f", rate))
 	}
-
-	c.String(http.StatusOK, fmt.Sprintf("%.5f", rate))
 }

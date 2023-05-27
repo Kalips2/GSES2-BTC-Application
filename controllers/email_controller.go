@@ -15,9 +15,9 @@ func SubscribeEmailController(context *gin.Context) {
 	email := context.Query("email")
 
 	if err := services.SubscribeEmailService(email); err != nil {
-		context.String(http.StatusConflict, "E-mail вже відписаний!")
-		return
+		context.String(http.StatusConflict, err.Error())
+	} else {
+		context.String(http.StatusOK, "E-mail додано")
 	}
 
-	context.String(http.StatusOK, "E-mail додано")
 }
