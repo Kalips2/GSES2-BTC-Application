@@ -15,10 +15,13 @@ func GetCurrentRate() (float64, error) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	var data map[string]float64
-	json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return 0, err
+	}
 
 	rate, ok := data["UAH"]
 	if !ok {

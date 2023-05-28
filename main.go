@@ -1,17 +1,18 @@
 package main
 
 import (
-	"btcApplication/controllers"
-	"github.com/gin-gonic/gin"
+	"btcApplication/handlers"
+	"github.com/go-chi/chi"
+	"net/http"
 )
 
 func main() {
-	router := gin.Default()
+	r := chi.NewRouter()
 
-	router.GET("/rate", controllers.GetCurrentRateHandlerController)
-	router.POST("/subscribe", controllers.SubscribeEmailController)
-	router.POST("/sendEmails", controllers.SendToEmailsController)
+	r.Get("/rate", handlers.GetCurrentRateHandler)
+	r.Post("/subscribe", handlers.SubscribeEmailHandler)
+	r.Post("/sendEmails", handlers.SendToEmailsHandler)
 
-	router.Run(":8080")
+	http.ListenAndServe(":8080", r)
 
 }

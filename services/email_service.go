@@ -8,11 +8,12 @@ import (
 	"github.com/go-gomail/gomail"
 )
 
-func SendToEmailsService() {
-	emails := repositories.GetEmailsFromStorage()
+func SendToEmailsService() error {
+	var emails []string
+	var err error
 
-	rate, _ := GetCurrentRate()
-
+	emails, err = repositories.GetEmailsFromStorage()
+	rate, err := GetCurrentRate()
 	dialer, message := setUpMessageToSend(rate)
 
 	for _, email := range emails {
@@ -22,9 +23,13 @@ func SendToEmailsService() {
 		}
 	}
 
+	return err
 }
 
 func SubscribeEmailService(email string) error {
+	if err := utils.ValidateEmail(email); err != nil {
+		return err
+	}
 	return repositories.SaveEmailToStorage(email)
 }
 

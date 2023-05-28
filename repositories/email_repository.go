@@ -9,28 +9,35 @@ import (
 )
 
 func SaveEmailToStorage(email string) error {
-
-	if checkEmailIsExist(email) {
-		return errors.New("Email is already exist")
+	if err := checkEmailIsExist(email); err != nil {
+		return err
 	}
 
-	file, _ := os.OpenFile(utils.SubscriptionFilePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-	defer file.Close()
+	var err error
+	file, err := os.OpenFile(utils.SubscriptionFilePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+
+	defer func(file *os.File) {
+		err = file.Close()
+	}(file)
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-
-	writer.Write([]string{encodeEmail(email)})
-
-	return nil
+	err = writer.Write([]string{encodeEmail(email)})
+	return err
 }
 
-func GetEmailsFromStorage() []string {
-	file, _ := os.Open(utils.SubscriptionFilePath)
-	defer file.Close()
+func GetEmailsFromStorage() ([]string, error) {
+	var file *os.File
+	var err error
+	if file, err = os.Open(utils.SubscriptionFilePath); err != nil {
+		return []string{}, err
+	}
+	defer func(file *os.File) {
+		err = file.Close()
+	}(file)
 
 	reader := csv.NewReader(file)
-	emails, _ := reader.ReadAll()
+	emails, err := reader.ReadAll()
 
 	var emailList []string
 	for _, encodedEmail := range emails {
@@ -38,18 +45,18 @@ func GetEmailsFromStorage() []string {
 		emailList = append(emailList, decodedEmail)
 	}
 
-	return emailList
+	return emailList, err
 }
 
-func checkEmailIsExist(email string) bool {
-	emails := GetEmailsFromStorage()
+func checkEmailIsExist(email string) error {
+	emails, err := GetEmailsFromStorage()
 
 	for _, existingEmail := range emails {
 		if existingEmail == email {
-			return true
+			return errors.New("Email is already subscribed.")
 		}
 	}
-	return false
+	return err
 }
 
 func encodeEmail(email string) string {
