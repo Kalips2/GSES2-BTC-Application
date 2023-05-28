@@ -39,8 +39,8 @@ func setUpMessageToSend(rate float64) (*gomail.Dialer, *gomail.Message) {
 
 	message := gomail.NewMessage()
 	message.SetHeader("From", utils.AppEmailLogin)
-	message.SetHeader("Subject", "Поточний курс BTC до UAH")
-	message.SetBody("text/plain", "Поточний курс BTC до UAH: "+fmt.Sprintf("%.5f", rate)+".")
+	message.SetHeader("Subject", "Поточний курс "+utils.FromCurrency+" до "+utils.ToCurrency)
+	message.SetBody("text/plain", "Поточний курс "+utils.FromCurrency+"до "+utils.ToCurrency+": "+fmt.Sprintf("%.5f", rate)+".")
 
 	return dialer, message
 }
