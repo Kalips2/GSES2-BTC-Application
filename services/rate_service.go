@@ -9,7 +9,7 @@ import (
 )
 
 func GetCurrentRate() (float64, error) {
-	resp, err := http.Get(utils.CryptoCompareApiURL + "?fsym=BTC&tsyms=UAH")
+	resp, err := http.Get(utils.CryptoCompareApiURL + "?fsym=" + utils.FromCurrency + "&tsyms=" + utils.ToCurrency)
 	if err != nil {
 		return 0, err
 	}
