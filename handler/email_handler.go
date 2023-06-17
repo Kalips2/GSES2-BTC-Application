@@ -1,13 +1,14 @@
-package handlers
+package handler
 
 import (
-	"btcApplication/services"
+	"btc-app/config"
+	"btc-app/service"
 	"fmt"
 	"net/http"
 )
 
-func SendToEmailsHandler(w http.ResponseWriter, r *http.Request) {
-	if err := services.SendToEmailsService(); err != nil {
+func SendToEmailsHandler(w http.ResponseWriter, r *http.Request, c *config.Config) {
+	if err := service.SendRateToEmails(c); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -15,10 +16,10 @@ func SendToEmailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SubscribeEmailHandler(w http.ResponseWriter, r *http.Request) {
+func SubscribeEmailHandler(w http.ResponseWriter, r *http.Request, c *config.Config) {
 	email := r.FormValue("email")
 
-	if err := services.SubscribeEmailService(email); err != nil {
+	if err := service.SubscribeEmail(email, c); err != nil {
 		http.Error(w, err.Error(), http.StatusConflict)
 	} else {
 		w.WriteHeader(http.StatusOK)

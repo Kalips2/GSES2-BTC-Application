@@ -1,18 +1,17 @@
 package main
 
 import (
-	"btcApplication/handlers"
-	"github.com/go-chi/chi"
-	"net/http"
+	"btc-app/config"
+	"btc-app/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	r := chi.NewRouter()
+	_ = godotenv.Load()
 
-	r.Get("/rate", handlers.GetCurrentRateHandler)
-	r.Post("/subscribe", handlers.SubscribeEmailHandler)
-	r.Post("/sendEmails", handlers.SendToEmailsHandler)
+	var conf config.Config
+	conf.InitConfigFromEnv()
 
-	http.ListenAndServe(":8080", r)
-
+	var curServer = server.NewServer(conf)
+	curServer.InitHandlers()
 }
